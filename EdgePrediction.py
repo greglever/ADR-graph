@@ -163,7 +163,7 @@ class EdgePrediction:
 						sourcetypes.add(edge[1])
 						targettypes.add(edge[3])
 				if len(sourcetypes) > 1 or len(targettypes) > 1:
-					print "ERROR: too many source or target node types"
+					print("ERROR: too many source or target node types")
 					return False
 				else:
 					sourcetype = list(sourcetypes)[0]
@@ -220,10 +220,10 @@ class EdgePrediction:
 				common_source_nodes = common_source_nodes.intersection(set(self.graphs[nw]['sourcenodes']))
 		if len(common_source_nodes) == 0:
 			self.can_analyse = False
-			print "ERROR no source nodes are common to all input graphs. Cannot continue"
+			print("ERROR no source nodes are common to all input graphs. Cannot continue")
 			return False
 		
-		print "%s source nodes are common to all %s input graphs" % (len(common_source_nodes), len(graph_names))
+		print("%s source nodes are common to all %s input graphs" % (len(common_source_nodes), len(graph_names)))
 		self.n_source_nodes = len(common_source_nodes)
 
 		for network_name in self.graphs:
@@ -236,14 +236,14 @@ class EdgePrediction:
 			A_graph_del_idx = [v.index for v in networkA['graph'].vs() if v['name'] in delete_from_A]
 
 			#delete these nodes
-			print "deleting %s nodes that don't overlap between networks" % len(A_graph_del_idx)
+			print("deleting %s nodes that don't overlap between networks" % len(A_graph_del_idx))
 			networkA['graph'].delete_vertices(A_graph_del_idx)
 
 			#check for nodes that now have degree zero
 			networkA['graph'].vs['degree'] = networkA['graph'].degree()
 			A_graph_del_idx = [v.index for v in networkA['graph'].vs() if v['degree'] == 0]
 			#delete these nodes
-			print "deleting another %s nodes that now have degree zero" % len(A_graph_del_idx)
+			print("deleting another %s nodes that now have degree zero" % len(A_graph_del_idx))
 			networkA['graph'].delete_vertices(A_graph_del_idx)
 
 			#reset sourcenodes and targetnodes
@@ -345,9 +345,9 @@ class EdgePrediction:
 			if ignore != None and network_name == self.to_predict:
 				if ignore in rownames:
 					predictors[rownames == ignore] = False
-					print "ignoring %s as a predictor in network %s" % (ignore, network_name)
+					print("ignoring %s as a predictor in network %s" % (ignore, network_name))
 				else:
-					print "ERROR %s not found in row names for network %s, continuing" % (ignore, network_name)
+					print("ERROR %s not found in row names for network %s, continuing" % (ignore, network_name))
 			predictors = set(rownames[predictors])
 			colnames = self.graphs[network_name]['ST'].keys()
 			overlaps = [len(predictors.intersection(self.graphs[network_name]['ST'][x])) for x in colnames]
@@ -395,7 +395,7 @@ class EdgePrediction:
 				p_adjust = r_stats.p_adjust(FloatVector(p_list), method = self.correct_pval)
 				pvals[:,0] = list(p_adjust)
 			else:
-				print "WARNING - NOT correcting p-values for multiple comparisons"
+				print("WARNING - NOT correcting p-values for multiple comparisons")
 			all_pvals[network_name] = pvals
 		return all_pvals
 
@@ -619,7 +619,7 @@ class EdgePrediction:
 			'threshold' : threshold of trained model
 		"""
 		if self.to_predict == None or self.can_analyse == False:
-			print "ERROR can't run prediction. self.to_predict = %s, self.can_analyse = %s" % (self.to_predict, self.can_analyse)
+			print("ERROR can't run prediction. self.to_predict = %s, self.can_analyse = %s" % (self.to_predict, self.can_analyse))
 			return False
 		known = self.getKnown(target)
 		known_set = set(known)
@@ -633,8 +633,8 @@ class EdgePrediction:
 		if self.require_all_predictors:
 			no_predictor_overlap = [x for x in overlap_max if overlap_max[x] == 0]
 			if len(no_predictor_overlap) > 0:
-				print "self.require_all_predictors is %s and %s/%s networks have 0 predictor overlap" % (self.require_all_predictors, len(no_predictor_overlap), len(normalised))
-				print "not optimising a model for %s" % (target)
+				print("self.require_all_predictors is %s and %s/%s networks have 0 predictor overlap" % (self.require_all_predictors, len(no_predictor_overlap), len(normalised)))
+				print("not optimising a model for %s" % (target))
 				optimisation_result = {}
 				optimisation_result['model_target'] = target
 				optimisation_result['model_built'] = False
@@ -672,7 +672,7 @@ class EdgePrediction:
 			optimisation_result['new_hits'] = list(optimisation_result['new_hits'])
 			optimisation_result['known_hits'] = list(optimisation_result['known_hits'])
 		else:
-			print "No method definied to handle the optimisation method %s" % self.optimisation_method
+			print("No method definied to handle the optimisation method %s" % self.optimisation_method)
 			raise NameError(self.optimisation_method)
 		
 		optimisation_result['optimisation_method'] = self.optimisation_method
@@ -705,14 +705,14 @@ class EdgePrediction:
 			Keys are model target node names, values are the output of self.predict()
 		"""
 		if self.to_predict == None or self.can_analyse == False:
-			print "ERROR can't run prediction. self.to_predict = %s, self.can_analyse = %s" % (self.to_predict, self.can_analyse)
+			print("ERROR can't run prediction. self.to_predict = %s, self.can_analyse = %s" % (self.to_predict, self.can_analyse))
 			return False
 		all_results = {}
 		all_targets = self.graphs[self.to_predict]['TS'].keys()
 		n_targets = len(all_targets)
 		n = 1
 		for target in all_targets:
-			print "%s (%s/%s)" % (target, n, n_targets)
+			print("%s (%s/%s)" % (target, n, n_targets))
 			n += 1
 			all_results[target] = self.predict(target, calculate_auc)
 		return all_results
@@ -738,7 +738,7 @@ class EdgePrediction:
 			whether the deleted edge was predicted.
 		"""
 		if self.to_predict == None or self.can_analyse == False:
-			print "ERROR can't run prediction. self.to_predict = %s, self.can_analyse = %s" % (self.to_predict, self.can_analyse)
+			print("ERROR can't run prediction. self.to_predict = %s, self.can_analyse = %s" % (self.to_predict, self.can_analyse))
 			return False
 		known = self.getKnown(target)
 		target_node_id = self.graphs[self.to_predict]['graph'].vs.select(name_eq=target)
@@ -802,7 +802,7 @@ class EdgePrediction:
 		remainder = len(known) % k
 
 		if edges_per_fold == 0:
-			print "specified fold size %s is too large for %s with %s known sources" % (k, target, len(known))
+			print("specified fold size %s is too large for %s with %s known sources" % (k, target, len(known)))
 			return False
 
 		start = 0
@@ -911,7 +911,7 @@ class EdgePrediction:
 			Keys are edge types, values are dicts keyed by source node name and values are scores.
 		"""
 		if self.to_predict == None or self.can_analyse == False:
-			print "ERROR can't run prediction. self.to_predict = %s, self.can_analyse = %s" % (self.to_predict, self.can_analyse)
+			print("ERROR can't run prediction. self.to_predict = %s, self.can_analyse = %s" % (self.to_predict, self.can_analyse))
 			return False
 		known = self.getKnown(target)
 		n_known = len(known)
@@ -924,8 +924,8 @@ class EdgePrediction:
 		if self.require_all_predictors:
 			no_predictor_overlap = [x for x in overlap_max if overlap_max[x] == 0]
 			if len(no_predictor_overlap) > 0:
-				print "self.require_all_predictors is %s and %s/%s networks have 0 predictor overlap" % (self.require_all_predictors, len(no_predictor_overlap), len(normalised))
-				print "not optimising a model for %s" % (target)
+				print("self.require_all_predictors is %s and %s/%s networks have 0 predictor overlap" % (self.require_all_predictors, len(no_predictor_overlap), len(normalised)))
+				print("not optimising a model for %s" % (target))
 				optimisation_result = {}
 				optimisation_result['model_target'] = target
 				optimisation_result['model_built'] = False
